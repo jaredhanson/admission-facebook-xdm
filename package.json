@@ -23,7 +23,8 @@
   ],
   "main": "main",
   "dependencies": {
-    "class": "git://github.com/anchorjs/class.git"
+    "class": "git://github.com/anchorjs/class.git",
+    "fbxdm": "git://github.com/jaredhanson/js-fbxdm.git"
   },
   "devDependencies": {
     "express": "3.x.x",
@@ -40,7 +41,8 @@
     "dependencies": {
       "class": "github:anchorjs/class/master",
       "events": "github:anchorjs/events/master",
-      "querystring": "github:anchorjs/querystring/master"
+      "querystring": "github:anchorjs/querystring/master",
+      "fbxdm": "github:jaredhanson/js-fbxdm/master"
     }
   }
 }
