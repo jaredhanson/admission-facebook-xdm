@@ -1,9 +1,10 @@
-define(['./lib/dom',
+define(['./lib/signedrequest',
+        './lib/dom',
         'fbxdm',
         'querystring',
         'events',
         'class'],
-function(dom, xdm, qs, Emitter, clazz) {
+function(SignedRequest, dom, xdm, qs, Emitter, clazz) {
   
   var IFRAME_TITLE = 'Facebook XDM Frame';
   
@@ -110,8 +111,28 @@ function(dom, xdm, qs, Emitter, clazz) {
       });
       
       
+      
+      var cbid = xdm.callback(function(result) {
+        var id = { domain: 'facebook.com' }
+          , creds;
+      
+        if (result.access_token) {
+          creds = creds || {};
+          creds.type = result.token_type || 'bearer';
+          creds.accessToken = result.access_token;
+          creds.expiresIn = result.expires_in;
+          creds.code = result.code;
+        }
+        if (result.signed_request) {
+          var sr = SignedRequest.parse(result.signed_request);
+          id.id = sr.user_id;
+        }
+      
+        self.emit('authenticate', id, creds);
+      })
+      
       // TODO: Make the initial immediate mode check optional.
-      var authUrl = self._getAuthUrl(true);
+      var authUrl = self._getAuthUrl(cbid, true);
       
       dom.createIframe({
         root: container,
@@ -128,7 +149,7 @@ function(dom, xdm, qs, Emitter, clazz) {
     return this;
   }
   
-  Provider.prototype._getAuthUrl = function(immediate) {
+  Provider.prototype._getAuthUrl = function(cbid, immediate) {
     // TODO: Build the redirect URI correctly
     
     var httpDomain = 'http://static.ak.facebook.com';
@@ -136,7 +157,7 @@ function(dom, xdm, qs, Emitter, clazz) {
     var channel = 'foo'; // TODO: generate unique channel name
     
     var frag = {
-      cb: '123456', // TODO: generate a unique callback ID
+      cb: cbid,
       origin: window.location.protocol + '//' + window.location.host + '/' + channel,
       domain: location.hostname, 
       relation: 'parent'
