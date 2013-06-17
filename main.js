@@ -65,11 +65,6 @@ function(dom, xdm, qs, Emitter, clazz) {
     var channelPath = '/channel.html' + '?' + 'fb_xd_fragment#xd_sig=' + proxySecret + '&';
     
     
-    xdm.handler(function() {
-      console.log('!! GOT FB MESSAGE !!');
-    })
-    
-    
     var self = this;
     var container = dom.appendHidden(document.createElement('div'));
     
@@ -124,6 +119,10 @@ function(dom, xdm, qs, Emitter, clazz) {
         url: authUrl,
         style: { display: 'none' }
       });
+    });
+    
+    xdm.action('proxy_ready', function() {
+      console.log('PROXY READY!!!!');
     });
     
     return this;
